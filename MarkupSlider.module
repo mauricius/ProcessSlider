@@ -1,0 +1,304 @@
+<?php
+
+/**
+ * ProcessSlider MarkupSlider
+ *
+ * Copyright (C) 2015 by Maurizio Bonani
+ * Licensed under GNU/GPL v2, see LICENSE
+ *
+ * @author Maurizio Bonani
+ * @site https://github.com/mauricius/ProcessSlider
+ *
+ * http://www.mauriziobonani.com
+ *
+ */
+
+class MarkupSlider extends WireData implements Module
+{
+    /**
+     * Name of the cache folder
+     * @var string
+     */
+    protected $cacheDir = 'MarkupSlider';
+
+    /**
+     * Name of the ProcessSlider folder
+     * @var string
+     */
+    protected $processSliderDir = 'ProcessSlider';
+
+    /**
+	 * Generator class
+     * @var null
+     */
+    protected $generator = null;
+
+    /**
+     * URL of the Module
+     * @var mixed|null|string
+     */
+    protected $moduleUrl = '';
+
+
+    /**
+     * ------------------------------------------------------------------------
+     * getModuleInfo is a module required by all modules to tell
+     * ProcessWire about them
+     * ------------------------------------------------------------------------
+     *
+     * @return array
+     */
+    public static function getModuleInfo()
+    {
+        return array(
+            'title' => 'MarkupSlider',
+            // ------------------------------------------------------------------------
+            // Version: major, minor, revision, i.e. 100 = 1.1.0
+            // ------------------------------------------------------------------------
+            'version' => 001,
+            'author' => 'Maurizio Bonani',
+            // ------------------------------------------------------------------------
+            // Summary is brief description of what this module is
+            // ------------------------------------------------------------------------
+            'summary' => 'Easily insert any complex Slider in your ProcessWire content by creating your own slider tags.',
+            // ------------------------------------------------------------------------
+            // Optional URL to more information about the module
+            // ------------------------------------------------------------------------
+            'href' => 'https://github.com/mauricius/ProcessSlider',
+            'requires' => 'ProcessSlider',
+            'icon' => 'image'
+        );
+    }
+
+
+    /**
+     * ------------------------------------------------------------------------
+     * Create the cache folder in the Assets folder at module installation.
+     * ------------------------------------------------------------------------
+     *
+     * @return bool
+     * @throws WireException
+     */
+    public function ___install()
+    {
+        if(!$this->database) {
+            throw new WireException("This version of MarkupSlider requires at least ProcessWire 2.4.0");
+        }
+
+        // Check if the folder already exists.
+        if(is_dir(wire('config')->paths->cache . $this->cacheDir . DIRECTORY_SEPARATOR)) return true;
+
+        // Try to create the folder recursively.
+        if(wireMkdir(wire('config')->paths->cache . $this->cacheDir . DIRECTORY_SEPARATOR) === false)
+        {
+            // If the folder can not be created, throw an error.
+            throw new WireException('The cache folder ('.wire('config')->paths->assets . $this->cacheDir . DIRECTORY_SEPARATOR.') could not be created.');
+        }
+    }
+
+    /**
+     * ------------------------------------------------------------------------
+     * Uninstall this module
+     * ------------------------------------------------------------------------
+     *
+     * @return bool
+     * @throws WireException
+     */
+    public function ___uninstall()
+    {
+        // Check if the folder already removed.
+        if(!is_dir(wire('config')->paths->cache . $this->cacheDir . DIRECTORY_SEPARATOR)) return true;
+
+        // Remove the cache folder.
+        $this->message("Removing cache path: $this->cacheDir");
+
+        if(wireRmdir(wire('config')->paths->cache . $this->cacheDir . DIRECTORY_SEPARATOR, true) === false)
+        {
+            // If the folder can not be deleted, throw an error
+            throw new WireException('The cache folder ('.wire('config')->paths->assets . $this->cacheDir . DIRECTORY_SEPARATOR.') could not be deleted.');
+        }
+    }
+
+
+    /**
+     * ------------------------------------------------------------------------
+     * Initialize the constructor.
+     * ------------------------------------------------------------------------
+     */
+    public function __construct()
+    {
+        $this->moduleUrl = $this->config->urls->MarkupSlider;
+    }
+
+
+    /**
+     * -----------------------------------------------------------------------------
+     * Initialize the module
+     * -----------------------------------------------------------------------------
+     * Include SliderGenerator class, which generates the markup and the
+     * initialization scripts of the ProcessSlider.
+     *
+     */
+    public function init()
+    {
+        if(!file_exists(wire('config')->paths->siteModules . $this->processSliderDir . DIRECTORY_SEPARATOR . 'jssor')) {
+            throw new WireException('Missing jssor folder. Are you sure that the library is present in '. wire('config')->paths->siteModules . $this->processSliderDir . DIRECTORY_SEPARATOR . '?');
+        }
+
+        require_once __DIR__ . '/SliderGenerator.php';
+
+        $this->generator = new SliderGenerator();
+    }
+
+
+    /**
+     * -----------------------------------------------------------------------------
+     * Includes the styles required by Jssor
+     * -----------------------------------------------------------------------------
+     *
+     * @param bool $arrows
+     * @param bool $bullets
+     * @return string
+     *
+     */
+    public function getStyles($arrows = false, $bullets = false)
+    {
+        $styles = "<link rel='stylesheet' type='text/css' href='{$this->moduleUrl}builder/css/{$this->custom_css_file}' />\n";
+
+        if($arrows) $styles .= "<link rel='stylesheet' type='text/css' href='{$this->moduleUrl}builder/css/arrows.css' />\n";
+        if($bullets) $styles .= "<link rel='stylesheet' type='text/css' href='{$this->moduleUrl}builder/css/bullets.css' />\n";
+
+        return $styles;
+    }
+
+
+    /**
+     * ------------------------------------------------------------------------
+     * Includes the scripts required by Jssor
+     * and the array of transitions
+     * ------------------------------------------------------------------------
+     *
+     * @return string
+     */
+    public function getScripts()
+    {
+        // use non-combined and non-minified files in development mode
+        if($this->development_mode == 1) {
+            $scripts =
+                "<script type='text/javascript' src='{$this->moduleUrl}jssor/js/jssor.js'></script>\n" .
+                "<script type='text/javascript' src='{$this->moduleUrl}jssor/js/jssor.slider.js'></script>\n";
+        } else {
+            $scripts = "<script type='text/javascript' src='{$this->moduleUrl}jssor/js/jssor.slider.min.js'></script>\n";
+        }
+
+        $scripts .= "<script type='text/javascript' src='{$this->moduleUrl}builder/js/_caption_transitions.js'></script>\n";
+
+        return $scripts;
+    }
+
+    /**
+     * -----------------------------------------------------------------------------
+	 * Process a sliderId to render the markup
+     * -----------------------------------------------------------------------------
+     *
+     * @param $sliderId - the id of the slider
+     * @param bool $includeInitScript - include the initialization script
+     * @param array $options - options array for overriding the initialization code
+     * @return string
+     * @throws WireException
+     *
+     */
+    public function render($sliderId, $includeInitScript = true, array $options = array())
+    {
+        $slider = $this->getReplacement($sliderId);
+
+        if(!$slider) {
+            throw new WireException("Unknown slider : $sliderId");
+        }
+
+        $markup = '';
+
+        if($includeInitScript) {
+            $markup .= $this->getScripts();
+        }
+
+        // if the module is set to use cache for markup
+        if($this->html_cache == 1)
+        {
+            $markupCacheFile = wire('config')->paths->cache . $this->cacheDir . '/' . $slider['name'] . '.cache';
+
+            $overwriteCache = (int) $slider['modified'] > (int) $slider['accessed'];
+
+            if($overwriteCache || !file_exists($markupCacheFile)) {
+                $markup .= $this->generator->generateMarkup($slider['code']);
+
+                if(!file_put_contents($markupCacheFile, trim($markup), LOCK_EX)) throw new WireException("Unable to write file: $markupCacheFile");
+                if(wire('config')->chmodFile) chmod($markupCacheFile, octdec(wire('config')->chmodFile));
+            } else {
+                $markup .= file_get_contents($markupCacheFile);
+            }
+        } else {
+            $markup .= $this->generator->generateMarkup($slider['code']);
+        }
+
+        // test if the markup has a video
+        if(preg_match("/<iframe.*?>/", $markup)) {
+            $options['hasVideo'] = true;
+        }
+
+
+        if($includeInitScript)
+        {
+            // if the module is set to use cache for scripts
+            if($this->js_cache == 1) {
+                $scriptCacheFile = wire('config')->paths->cache . $this->cacheDir . DIRECTORY_SEPARATOR . $slider['name'] . '_js.cache';
+
+                if($overwriteCache || !file_exists($scriptCacheFile))
+                {
+                    $script = $this->generator->generateScript($slider['code'], $options);
+
+                    if(!file_put_contents($scriptCacheFile, trim($script), LOCK_EX)) throw new WireException("Unable to write file: $scriptCacheFile");
+                    if(wire('config')->chmodFile) chmod($scriptCacheFile, octdec(wire('config')->chmodFile));
+                } else {
+                    $script = file_get_contents($scriptCacheFile);
+                }
+            } else {
+                $script = $this->generator->generateScript($slider['code'], $options);
+            }
+
+            $markup .= "\n<script type='text/javascript'>" . $script . "</script>";
+        }
+
+        return $markup;
+	}
+
+
+	/**
+     * -----------------------------------------------------------------------------
+	 * Given the sliderId, retrieve the replacement
+     * -----------------------------------------------------------------------------
+     *
+	 * @param string $sliderId -> The id of the slider
+	 * @return string
+	 *
+	 */
+	protected function getReplacement($sliderId)
+    {
+        $sql = 'SELECT * FROM slider WHERE `id`=:id';
+        $query = $this->database->prepare($sql);
+        $query->bindValue(':id', $sliderId, PDO::PARAM_INT);
+        $query->execute();
+
+        if(!$query->rowCount()) return false;
+
+        $slider = $query->fetch(PDO::FETCH_ASSOC);
+        $query->closeCursor();
+
+        $query = $this->database->prepare("UPDATE slider SET accessed=:time WHERE id=:id");
+        $query->bindValue(":time", time());
+        $query->bindValue(":id", $sliderId);
+        $query->execute();
+
+		return $slider;
+	}
+}

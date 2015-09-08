@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * ProcessWire FieldtypeSlider
+ *
+ * For documentation about the fields used in this class, please see:
+ * /wire/core/Fieldtype.php
+ *
+ * Copyright (C) 2015 by Maurizio Bonani
+ * Licensed under GNU/GPL v2, see LICENSE
+ *
+ * @author Maurizio Bonani
+ * @site https://github.com/mauricius/ProcessSlider
+ *
+ * http://www.mauriziobonani.com
+ *
+ */
+
+class FieldtypeSlider extends Fieldtype
+{
+    /**
+     * ------------------------------------------------------------------------
+     * getModuleInfo is a module required by all modules to tell
+     * ProcessWire about them
+     * ------------------------------------------------------------------------
+     *
+     * @return array
+     */
+    public static function getModuleInfo()
+    {
+        return array(
+            // ------------------------------------------------------------------------
+            // Module Title
+            // ------------------------------------------------------------------------
+            'title' => 'FieldtypeSlider',
+            // ------------------------------------------------------------------------
+            // Version: major, minor, revision, i.e. 100 = 1.1.0
+            // ------------------------------------------------------------------------
+            'version' => 001,
+            'author' => 'Maurizio Bonani',
+            // ------------------------------------------------------------------------
+            // Optional URL to more information about the module
+            // ------------------------------------------------------------------------
+            'href' => 'https://github.com/mauricius/ProcessSlider',
+            // ------------------------------------------------------------------------
+            // Summary is a brief description of what this module is
+            // ------------------------------------------------------------------------
+            'summary' => 'Field that stores an instace of ProcessSlider for a page',
+            'installs' => 'InputfieldSlider',
+            'icon' => 'image'
+        );
+    }
+
+    /**
+     * ------------------------------------------------------------------------
+     * Return the Inputfield required by this Fieldtype
+     * ------------------------------------------------------------------------
+     *
+     * @param Page $page
+     * @param Field $field
+     * @return Fieldtype|Inputfield|Module|null|Process|Textformatter
+     */
+    public function getInputfield(Page $page, Field $field)
+    {
+        $inputfield = $this->modules->get('InputfieldSlider');
+
+        return $inputfield;
+    }
+
+
+    /**
+     * ------------------------------------------------------------------------
+     * Sanitize value for runtime
+     * ------------------------------------------------------------------------
+     *
+     * @param Page $page
+     * @param Field $field
+     * @param int|object|string|WireArray $value
+     * @return int|object|string|WireArray
+     */
+    public function sanitizeValue(Page $page, Field $field, $value)
+    {
+        return $value;
+    }
+}

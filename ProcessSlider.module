@@ -1,0 +1,648 @@
+<?php
+
+/**
+ * ProcessSlider
+ *
+ * The ProcessSlider module
+ *
+ * Copyright (C) 2015 by Maurizio Bonani
+ * Licensed under GNU/GPL v2, see LICENSE
+ *
+ * @author Maurizio Bonani
+ * @site https://github.com/mauricius/ProcessSlider
+ *
+ * http://www.mauriziobonani.com
+ *
+ */
+
+class ProcessSlider extends Process implements ConfigurableModule
+{
+    /**
+     * ------------------------------------------------------------------------
+     * getModuleInfo is a module required by all modules to tell
+     * ProcessWire about them
+     * ------------------------------------------------------------------------
+     *
+     * @return array
+     */
+    public static function getModuleInfo()
+    {
+        return array(
+            'title' => 'Process Slider',
+            // ------------------------------------------------------------------------
+            // Version: major, minor, revision, i.e. 100 = 1.1.0
+            // ------------------------------------------------------------------------
+            'version' => 001,
+            'author' => 'Maurizio Bonani',
+            // ------------------------------------------------------------------------
+            // Summary is brief description of what this module is
+            // ------------------------------------------------------------------------
+            'summary' => 'Easily insert Jssor Sliders in your ProcessWire content',
+            // ------------------------------------------------------------------------
+            // Optional URL to more information about the module
+            // ------------------------------------------------------------------------
+            'href' => 'https://github.com/mauricius/ProcessSlider',
+            'permission' => 'slider',
+            'permissions' => array(
+                'slider-list' => 'List and view Sliders',
+                'slider-edit' => 'Add/edit/delete Sliders'
+            ),
+            'icon' => 'image'
+        );
+    }
+
+    /**
+     * The name that will be used for the page this module creates
+     *
+     */
+    const pageName = 'slider-code';
+
+
+    /**
+     * Instance of Slider
+     * @var null
+     */
+    protected $slider = null;
+
+    /**
+     * ProcessSlider Module URL
+     * @var mixed|null|string
+     */
+    protected $moduleUrl = '';
+
+
+    /**
+     * -----------------------------------------------------------------------------
+     * Constructor
+     * -----------------------------------------------------------------------------
+     */
+    public function __construct()
+    {
+        $this->moduleUrl = $this->config->urls->ProcessSlider;
+
+        if(!$this->database) {
+            throw new WireException("This version of ProcessSlider requires at least ProcessWire 2.4.0");
+        }
+    }
+
+
+    /**
+     * -----------------------------------------------------------------------------
+     * This is an optional initialization function called before any execute functions.
+     * -----------------------------------------------------------------------------
+     */
+    public function init()
+    {
+        parent::init();
+    }
+
+
+    /**
+     * -----------------------------------------------------------------------------
+     * Verifies the permission of the current user
+     * -----------------------------------------------------------------------------
+     *
+     * @param $name
+     * @return bool
+     */
+    protected function hasPermission($name)
+    {
+        $user = $this->user;
+        if($user->isSuperuser()) return true;
+
+        if($name == 'slider-edit') {
+            $permission = $this->permissions->get($name);
+
+            if(!$permission->id) $name = 'slider';
+        }
+
+        $has = $user->hasPermission($name);
+
+        return $has;
+    }
+
+
+    /**
+     * -----------------------------------------------------------------------------
+     * This function is executed when a page with your Process assigned is accessed.
+     * -----------------------------------------------------------------------------
+     *
+     * @return string
+     */
+    public function ___execute()
+    {
+        $table = $this->modules->get('MarkupAdminDataTable');
+        $table->setEncodeEntities(false);
+        $table->headerRow(array(
+            $this->_x('Name', 'list-table'),
+            $this->_x('Modified', 'list-table'),
+            $this->_x('Accessed', 'list-table')
+        ));
+
+        $sort = 'name';
+        if($this->input->get->sort == '-modified') $sort = 'modified DESC';
+        $sql = "SELECT id, name, modified, accessed, code FROM slider ORDER BY :sort";
+        $query = $this->database->prepare($sql);
+        $query->bindValue(':sort', $sort);
+        $query->execute();
+        $numRows = 0;
+
+        while($row = $query->fetch(PDO::FETCH_NUM)) {
+            list($id, $name, $modified, $accessed, $code) = $row;
+
+             $table->row(array(
+                wire('sanitizer')->entities($name) => "edit/?id=$id",
+                wireRelativeTimeStr($modified),
+                wireRelativeTimeStr($accessed)
+            ));
+            $numRows++;
+        }
+
+        if(!$numRows) $this->message($this->_('No Sliders yet, go ahead and add one!'));
+
+        if($this->hasPermission('slider-edit')) {
+            $button1 = $this->modules->get('InputfieldButton');
+            $button1->attr('id', 'button_add');
+            $button1->attr('value', $this->_('Add New'));
+            $button1->attr('href', './edit/');
+            $button1->class .= ' head_button_clone';
+
+            $button2 = $this->modules->get('InputfieldButton');
+            $button2->attr('id', 'button_import');
+            $button2->attr('value', $this->_('Import'));
+            $button2->attr('href', './import/');
+            $button2->class .= ' ui-priority-secondary';
+
+            $buttons = $button1->render() . $button2->render();
+        } else {
+            $buttons = '';
+        }
+
+        $out = $table->render();
+        if(empty($out)) $out .= "<br />";
+
+        return $out . $buttons;
+    }
+
+    /**
+     * -----------------------------------------------------------------------------
+     * Import Sliders code
+     * -----------------------------------------------------------------------------
+     */
+    public function ___executeImport()
+    {
+        if(!$this->hasPermission('slider-edit')) throw new WireException("No permission");
+
+        $form = $this->modules->get('InputfieldForm');
+
+        $field = $this->modules->get('InputfieldTextarea');
+        $field->attr('id+name', 'slider_import');
+        $field->label = $this->_("Paste in Import Data");
+        $form->add($field);
+
+        $field = $this->modules->get('InputfieldSubmit');
+        $field->attr('name', 'submit_import');
+        $form->add($field);
+
+        Wire::setFuel('processHeadline', $this->_("Import Slider Code"));
+
+        if(!$this->input->post->submit_import) return $form->render();
+
+        $form->processInput($this->input->post);
+        $data = $form->get('slider_import')->value;
+        if(!preg_match('{!ProcessSlider:([^:]+):(.*?)/!ProcessSlider}s', $data, $matches)) throw new WireException("Unrecognized ProcessSlider format");
+        $name = $matches[1];
+        $data = $matches[2];
+        $data = base64_decode($data);
+        if($data === false) throw new WireException("Failed to base64 decode import data");
+        $data = json_decode($data, true);
+        if($data === false) throw new WireException("Failed to json decode import data");
+        if(empty($data['name']) || empty($data['code'])) throw new WireException("Import data does not contain all required fields");
+
+        $query = $this->database->prepare("SELECT COUNT(*) FROM slider WHERE name=:name");
+        $query->bindValue(':name', $name);
+        $query->execute();
+        list($n) = $query->fetch(PDO::FETCH_NUM);
+
+        if($n > 0) {
+            $this->error($this->_('A Slider with that name already exists!'));
+            return $this->session->redirect('../');
+        }
+
+        $sql = 	"INSERT INTO slider SET `name`=:name, `code`=:code, `modified`=:modified";
+        $query = $this->database->prepare($sql);
+        $query->bindValue(':name', $name);
+        $query->bindValue(':code', $data['code']);
+        $query->bindValue(':modified', time());
+
+        if($query->execute()) {
+            $this->message($this->_('Imported Slider:') . " $name");
+            $id = (int) $this->database->lastInsertId();
+            $this->session->redirect("../edit/?id=$id");
+        } else {
+            throw new WireException("Error importing (database insert)");
+        }
+    }
+
+    /**
+     * -----------------------------------------------------------------------------
+     * Runs a test on the current Slider using the MarkupSlider module.
+     * -----------------------------------------------------------------------------
+     *
+     * @throws WireException
+     */
+    public function ___executeTest()
+    {
+        $id = (int) $this->input->get->id;
+
+        $name = $this->sanitizer->pageName($this->input->get->name);
+
+        if(empty($name)) throw new WireException('Nothing provided to test');
+
+        if(!$this->modules->isInstalled('MarkupSlider')) throw new WireException('MarkupSlider module is required for testing');
+
+        $this->modules->get('JqueryCore');
+        $slider = $this->modules->get('MarkupSlider');
+
+        $this->config->debug = true;
+        error_reporting(E_ALL | E_STRICT);
+        ini_set('display_errors', 1);
+        $timer = Debug::timer();
+
+        $intro = $this->_('This test is here primarily to check for errors. You should still test in a real-world context before assuming it works.');
+
+        echo <<< _OUT
+
+		<!DOCTYPE html>
+		<html>
+		<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+_OUT;
+
+        echo $slider->getStyles(true, true);
+
+        echo <<< _OUT
+
+		<style type='text/css'>
+			body {
+				background: #fff;
+				color: #555;
+				font-family: Arial;
+			}
+		</style>
+		<body onload="setHeight()">
+			<p style="margin-top: 1em"><small>$intro</small></p>
+			<div>
+
+_OUT;
+
+        echo $slider->render($id);
+
+        $seconds = sprintf($this->_('Executed in %s seconds'), Debug::timer($timer));
+
+        echo <<< _OUT
+
+			</div>
+			<p><small>$seconds</small></p>
+			<script>
+			    function setHeight() {
+			        parent.document.getElementById('SliderTestPort').style.width = '100%';
+                    parent.document.getElementById('SliderTestPort').style.height = document['body'].offsetHeight + 'px';
+                }
+            </script>
+		</body>
+		</html>
+_OUT;
+
+        exit;
+    }
+
+    /**
+     * -----------------------------------------------------------------------------
+     * Called when the URL is this module's page URL + "/edit/"
+     * so the user is editing the current Slider
+     * -----------------------------------------------------------------------------
+     *
+     * @return mixed
+     * @throws WireException
+     */
+    public function ___executeEdit()
+    {
+        // styles
+        $this->config->styles->append($this->moduleUrl . 'builder/css/responsivegrid.css');
+        $this->config->styles->append($this->moduleUrl . 'builder/css/process-slider-builder.css');
+        $this->config->styles->append($this->moduleUrl . 'builder/css/' . $this->custom_css_file);
+
+        // scripts
+        $this->config->scripts->add($this->moduleUrl . 'builder/js/pwimage.js');
+        $this->config->scripts->add($this->moduleUrl . 'builder/js/dragslider.js');
+
+        if($this->custom_classes !== '') {
+            $classes = explode("\n", $this->custom_classes);
+            array_unshift($classes, '');
+
+            $this->config->js("custom_classes", $classes);
+        }
+
+        // add a breadcrumb that returns to our main page
+        $this->breadcrumbs->add(new Breadcrumb('../', $this->page->title));
+
+
+        $this->modules->get('JqueryWireTabs');
+        $this->modules->get('JqueryUI')->use('modal');
+
+        $editable = $this->hasPermission('slider-edit');
+
+        $id = (int) $this->input->get->id;
+
+        if($id) {
+            $query = $this->database->prepare("SELECT name, code FROM slider WHERE id=:id");
+            $query->bindValue(':id', $id);
+            $query->execute();
+            if(!$query->rowCount()) throw new WireException("Unknown ID");
+            list($name, $code) = $query->fetch(PDO::FETCH_NUM);
+            $exportData = array('name' => $name, 'code' => $code);
+
+            // sets the slider code in order to initialize the component
+            $this->config->js("slider_code", $code);
+
+            $attr = '';
+
+            Wire::setFuel('processHeadline', $this->_("Edit Slider:") . " $name");
+        } else {
+            $name = '';
+            $code = '';
+            $attr = '';
+            $exportData = null;
+            Wire::setFuel('processHeadline', $this->_("Adding New Slider"));
+            if(!$editable) throw new WireException("You don't have permission to add new Sliders");
+        }
+
+        if(!$editable) $this->message($this->_('This Slider is read-only'));
+
+        $form = $this->modules->get('InputfieldForm');
+        $form->attr('id', 'SliderEdit');
+        $form->action = './';
+        $form->method = 'POST';
+
+        $tab = new InputfieldWrapper();
+        $tab->attr('title', $this->_('Basics'));
+        $tab->class .= " WireTab";
+
+        $nameField = $this->modules->get('InputfieldName');
+        $nameField->attr('name', 'slider_name');
+        $nameField->attr('value', $name);
+        $nameField->description = $this->_('Any combination of these characters: -_.a-zA-Z0-9 (i.e. letters, numbers, hyphens, underscores, periods, no spaces)');
+        $tab->add($nameField);
+
+        $form->add($tab);
+
+        if($id && $editable) {
+            $tab = new InputfieldWrapper();
+            $tab->attr('title', $this->_('Code'));
+            $tab->class .= ' WireTab';
+
+            // Loads the Vue.js markup and the initialization script is deferred
+            // http://www.w3schools.com/tags/att_script_defer.asp
+            $markup =
+                file_get_contents(dirname(__FILE__) . '/process-slider-markup.php') .
+                '<script defer="defer" type="text/javascript" src="' . $this->config->urls->ProcessSlider . 'builder/dist/build.js"></script>';
+
+            $sliderField = $this->modules->get('InputfieldMarkup');
+            $sliderField->label = $this->_('Slider');
+            $sliderField->value = $markup;
+            $sliderField->collapsed = Inputfield::collapsedNo;
+            $tab->add($sliderField);
+        }
+
+        $codeField = $this->modules->get('InputfieldHidden');
+        $codeField->attr('id+name', 'slider_code');
+        $codeField->attr('value', trim($code));
+        $tab->add($codeField);
+
+        $form->add($tab);
+
+        if($exportData) {
+            $tab = new InputfieldWrapper();
+            $tab->attr('title', $this->_('Export'));
+            $tab->class .= " WireTab";
+            $f = $this->modules->get('InputfieldTextarea');
+            $f->attr('id+name', 'slider_export');
+            $f->attr('value', "!ProcessSlider:$name:" . base64_encode(json_encode($exportData)) . "/!ProcessSlider");
+            $f->label = $tab->attr('title');
+            $f->description = $this->_('To export this Hanna code and import somewhere else, copy the contents of this field and paste into the import box somewhere else.');
+            $f->notes = $this->_('If you have made any changes above, make sure to save before copying the export data here.');
+            $tab->add($f);
+            $form->add($tab);
+        }
+
+        if($id && $editable) {
+            $tab = new InputfieldWrapper();
+            $tab->attr('title', $this->_('Delete'));
+            $tab->class .= " WireTab";
+            $tab->attr('id', 'SliderDelete');
+            $f = $this->modules->get('InputfieldCheckbox');
+            $f->attr('name', 'slider_delete');
+            $f->attr('value', $id);
+            $f->label = $tab->attr('title');
+            $f->description = $this->_('Check the box and submit the form to permanently delete this Slider.');
+            $tab->add($f);
+            $form->add($tab);
+        }
+
+        if($this->input->get->test) {
+            $tab = new InputfieldWrapper();
+            $tab->attr('title', $this->_('Test Results'));
+            $tab->class .= " WireTab";
+            $tab->attr('id', 'SliderTestResults');
+            $f = $this->modules->get('InputfieldMarkup');
+            $f->label = $this->_('Test Results');
+            $f->value = "
+				<iframe frameborder='0' id='SliderTestPort' src='../test/?id=$id&name=$name&modal=1'></iframe>
+				<script>$(document).ready(function() { $('#SliderTestResults').click(); });</script>
+				";
+            $tab->add($f);
+            $form->add($tab);
+        }
+
+        $f = $this->modules->get('InputfieldHidden');
+        $f->attr('name', 'slider_id');
+        $f->attr('value', $id);
+        $form->add($f);
+
+        if($editable) {
+            $f = $this->modules->get('InputfieldSubmit');
+            $f->class .= ' head_button_clone';
+            $f->attr('id+name', 'slider_save');
+            $f->attr('value', $this->_('Save'));
+            $form->add($f);
+
+            // shows the Test button only if MarkupSlider module is present
+            if($id && $this->modules->isInstalled('MarkupSlider')) {
+                $f = $this->modules->get('InputfieldSubmit');
+                $f->attr('id+name', 'slider_save_test');
+                $f->attr('value', $this->_('Save & Test'));
+                $f->class .= " ui-priority-secondary";
+                $form->add($f);
+            }
+
+            $f = $this->modules->get('InputfieldSubmit');
+            $f->attr('id+name', 'slider_save_exit');
+            $f->class .= " ui-priority-secondary";
+            $f->attr('value', $this->_('Save & Exit'));
+            $form->add($f);
+        }
+
+        $post = $this->input->post;
+        if($post->slider_save || $post->slider_save_exit || $post->slider_save_test) $this->save($form);
+
+        return $form->render();
+    }
+
+
+    /**
+     * -----------------------------------------------------------------------------
+     * Save current Slider
+     * -----------------------------------------------------------------------------
+     *
+     * @param $form
+     * @return bool
+     * @throws WireException
+     */
+    protected function save($form)
+    {
+        $permissionError = $this->_('You do not have permission to save this.');
+        if(!$this->hasPermission('slider-edit')) throw new WireException($permissionError);
+
+        $id = (int) $this->input->post->slider_id;
+
+        $delete = (int) $this->input->post->slider_delete;
+        $exitAfterSave = $this->input->post->slider_save_exit;
+        $testAfterSave = $this->input->post->slider_save_test;
+
+        $database = $this->database;
+
+        if($delete && $delete === $id) {
+            $query = $database->prepare("DELETE FROM slider WHERE id=:delete LIMIT 1");
+            $query->bindValue(":delete", $delete);
+            $query->execute();
+            $this->message($this->_('Deleted Slider'));
+            $this->session->redirect('../');
+        }
+
+        $form->processInput($this->input->post);
+
+        $name = $form->get('slider_name')->value;
+        $code = $form->get('slider_code')->value;
+
+        if(empty($name)) {
+            $form->get('slider_name')->error('Name is required');
+            return false;
+        }
+
+        if(empty($code)) $code = '';
+
+        $sql = 	($id ? "UPDATE " : "INSERT INTO ") . "slider " .
+            "SET `name`=:name, `code`=:code, `modified`=:modified " .
+            ($id ? "WHERE id=:id" : "");
+
+        $query = $database->prepare($sql);
+        $query->bindValue(':name', $name);
+        $query->bindValue(':code', trim($code));
+        $query->bindValue(':modified', time());
+        if($id) $query->bindValue(':id', $id);
+        $result = $query->execute();
+
+        if($result) {
+            if(!$id) $id = $database->lastInsertId();
+            $this->message($this->_("Saved Slider") . " - $name");
+            if($exitAfterSave) $this->session->redirect("../?sort=-modified");
+            else if($testAfterSave) $this->session->redirect("./?id=$id&test=1");
+            else $this->session->redirect("./?id=$id");
+        } else {
+            $this->error("Error saving");
+            return false;
+        }
+    }
+
+
+    /**
+     * -----------------------------------------------------------------------------
+     * Called only when your module is installed
+     * -----------------------------------------------------------------------------
+     *
+     * This version creates a new page with this Process module assigned.
+     *
+     */
+    public function ___install()
+    {
+        $page = new Page();
+        $page->template = 'admin';
+        $page->name = self::pageName;
+
+        // installs to the admin "Setup" menu ... change as you see fit
+        $page->parent = $this->pages->get($this->config->adminRootPageID)->child('name=setup');
+        $page->process = $this;
+
+        // we will make the page title the same as our module title
+        $info = self::getModuleInfo();
+
+        $page->title = $info['title'];
+
+        // save the page
+        $page->save();
+
+        // tell the user we created this page
+        $this->message("Created Page: {$page->path}");
+
+        $sql =
+            "CREATE TABLE slider (" .
+                "`id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, " .
+                "`name` varchar(128) NOT NULL, " .
+                "`code` text, " .
+                "`modified` int unsigned NOT NULL default 0, " .
+                "`accessed` int unsigned NOT NULL default 0, " .
+                "UNIQUE `name`(`name`)"  .
+            ")";
+
+        try {
+            if($this->database) $this->database->exec($sql);
+            else $this->db->query($sql);
+
+        } catch(Exception $e) {
+            $this->error($e->getMessage());
+        }
+    }
+
+    /**
+     * -----------------------------------------------------------------------------
+     * Called only when your module is uninstalled
+     * -----------------------------------------------------------------------------
+     *
+     * This should return the site to the same state it was in before the module was installed.
+     *
+     */
+    public function ___uninstall()
+    {
+        // find the page we installed, locating it by the process field (which has the module ID)
+        $moduleID = $this->modules->getModuleID($this);
+        $page = $this->pages->get("template=admin, process=$moduleID, name=" . self::pageName);
+
+        if($page->id) {
+            // if we found the page, let the user know and delete it
+            $this->message("Deleting Page: {$page->path}");
+            $page->delete();
+        }
+
+        $sql = "DROP TABLE slider";
+
+        try {
+            if($this->database) $this->database->exec($sql);
+            else $this->db->query($sql);
+
+        } catch(Exception $e) {
+            $this->error($e->getMessage());
+        }
+    }
+} 

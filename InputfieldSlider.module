@@ -1,0 +1,121 @@
+<?php
+
+/**
+ * ProcessSlider InputfieldSlider module
+ *
+ * Provides an Inputfield for using Sliders on ProcessWire pages
+ *
+ * For documentation about the fields used in this class, please see:
+ * /wire/core/Fieldtype.php
+ *
+ * Copyright (C) 2015 by Maurizio Bonani
+ * Licensed under GNU/GPL v2, see LICENSE
+ *
+ * @author Maurizio Bonani
+ * @site https://github.com/mauricius/ProcessSlider
+ *
+ * http://www.mauriziobonani.com
+ *
+ */
+
+class InputfieldSlider extends InputfieldSelect implements Module
+{
+    /**
+     * ------------------------------------------------------------------------
+     * getModuleInfo is a module required by all modules to tell
+     * ProcessWire about them
+     * ------------------------------------------------------------------------
+     *
+     * @return array
+     */
+    public static function getModuleInfo()
+    {
+        return array(
+            'title' => 'InputfieldSlider',
+            // ------------------------------------------------------------------------
+            // Version: major, minor, revision, i.e. 100 = 1.1.0
+            // ------------------------------------------------------------------------
+            'version' => 001,
+            'author' => 'Maurizio Bonani',
+            // ------------------------------------------------------------------------
+            // Summary is brief description of what this module is
+            // ------------------------------------------------------------------------
+            'summary' => 'Lets you select a ProcessSlider instance into a page',
+            // ------------------------------------------------------------------------
+            // Optional URL to more information about the module
+            // ------------------------------------------------------------------------
+            'href' => 'https://github.com/mauricius/ProcessSlider',
+            // ------------------------------------------------------------------------
+            // singular=true: indicates that only one instance of the module is allowed.
+            // This is usually what you want for modules that attach hooks.
+            // ------------------------------------------------------------------------
+            'singular' => true,
+            // ------------------------------------------------------------------------
+            // autoload=true: indicates the module should be started with ProcessWire.
+            // ------------------------------------------------------------------------
+            'autoload' => false,
+            'requires' => 'FieldtypeSlider',
+            'icon' => 'image',
+        );
+    }
+
+    /**
+     * ------------------------------------------------------------------------
+     * Install Hook
+     * ------------------------------------------------------------------------
+     */
+    public function ___install() {}
+
+
+    /**
+     * ------------------------------------------------------------------------
+     * Constructor
+     * ------------------------------------------------------------------------
+     */
+    public function __construct()
+    {
+        $this->name = 'slider';
+
+        parent::__construct();
+    }
+
+    /**
+     * ------------------------------------------------------------------------
+     * Initialize the Slider Inputfield
+     * ------------------------------------------------------------------------
+     */
+    public function init()
+    {
+        parent::setAttribute('name', $this->name);
+
+        $this->options = $this->getSliders();
+
+        return parent::init();
+    }
+
+    /**
+     * ------------------------------------------------------------------------
+     * Gets all the sliders in the Database
+     * ------------------------------------------------------------------------
+     *
+     * @return array
+     */
+    protected function getSliders()
+    {
+        $ret = [];
+
+        $sql = 'SELECT `id`,`name` FROM slider';
+        $query = $this->database->prepare($sql);
+        $query->execute();
+        if(!$query->rowCount()) return $ret;
+
+        $rows = $query->fetchAll(PDO::FETCH_CLASS);
+        $query->closeCursor();
+
+        foreach($rows as $row) {
+            $ret[$row->id] = $row->name;
+        }
+
+        return $ret;
+    }
+}

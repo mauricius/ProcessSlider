@@ -1,0 +1,376 @@
+/**
+ * ProcessSlider Stylesheet
+ *
+ * Copyright (C) 2015 by Maurizio Bonani
+ * Licensed under GNU/GPL v2, see LICENSE.TXT
+ *
+ * @author Maurizio Bonani
+ * @site https://github.com/mauricius/ProcessSlider
+ *
+ * http://www.mauriziobonani.com
+ *
+ */
+
+/**
+ *      Index
+ *
+ *  1. Vue.js Transitions
+ *  2. Helper Classes
+ *  3. Notification
+ *  4. Tools Component
+ *  5. Bar Component
+ *  6. Tabs Component
+ *  7. Slider Component
+ *  8. Elements
+ *  9. Toe Component
+ *  10. Timeline Component
+ */
+
+
+/*  1. Vue.js Transitions ============================================================================= */
+
+#ProcessSliderModule .expand-transition {
+    transition: all .3s ease;
+    padding: 10px;
+    background-color: #eee;
+    overflow: hidden;
+}
+#ProcessSliderModule .expand-enter,
+#ProcessSliderModule .expand-leave {
+    height: 0;
+    padding: 0 10px;
+    opacity: 0;
+}
+
+
+/*  2. Helper Classes  ============================================================================= */
+
+#ProcessSliderModule input[disabled] {
+    cursor: not-allowed;
+}
+
+#ProcessSliderModule .draggable {
+    cursor: pointer
+}
+
+.disabled {
+    pointer-events: none;
+    cursor: default;
+}
+
+
+/*  3. Notification (tnx Ryan) =============================================================================== */
+
+#ProcessSliderModule .notification {
+    background: #95C715;
+    background: -moz-linear-gradient(top, #95C715 0%, #7BA60D 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#95C715), color-stop(100%,#7BA60D));
+    background: linear-gradient(top, #95C715 0%,#7BA60D 100%);
+    border: 1px solid #7BA60D;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0 8px;
+    width: 20%;
+    top: 0px;
+    left: 40%;
+    -moz-border-radius: 0 0 5px 5px;
+    -webkit-border-bottom-right-radius: 5px;
+    -webkit-border-bottom-left-radius: 5px;
+    border-radius: 0 0 5px 5px;
+    z-index: 10000;
+    position: fixed;
+    -moz-box-shadow: 0px 3px 5px rgba(0,0,0,0.2), inset 0px -1px 0px rgba(255,255,255,0.2);
+    -webkit-box-shadow: 0px 3px 5px rgba(0,0,0,0.2), inset 0px -1px 0px rgba(255,255,255,0.2);
+    box-shadow: 0px 3px 5px rgba(0,0,0,0.2), inset 0px -1px 0px rgba(255,255,255,0.2);
+}
+
+
+/* 4. Tools Component ============================================================================= */
+
+#ProcessSliderModule .tools {
+    padding: 1em;
+    border-bottom: 1px solid #d9e1ea;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+#ProcessSliderModule .tools .close {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+#ProcessSliderModule .tools .close:hover {
+    color: #F00;
+}
+#ProcessSliderModule .tools div {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+#ProcessSliderModule .tools h3 {
+    margin: 0;
+}
+
+
+/* 5. Bar Component ============================================================================= */
+
+#ProcessSliderModule .bar li {
+    margin : 0;
+}
+
+
+/* 6. Tabs Component ============================================================================= */
+
+#ProcessSliderModule .sortable-placeholder {
+    border: 1px dotted #CCC;
+    background-color: #f8efa5;
+    width: 73px;
+    height: 52px;
+}
+
+#ProcessSliderModule .tabs {
+    display: block;
+    height: auto !important;
+    min-width: 1170px;
+    background: #fff;
+    overflow: hidden;
+}
+
+#ProcessSliderModule .tabs > li {
+    display: inline;
+    float: left;
+    border-radius: 5px 5px 0 0;
+    border-width: 2px 1px;
+    margin: 0;
+    padding: 0;
+}
+
+#ProcessSliderModule .tabs > li > a {
+    display: inline-block;
+    padding: 12px;
+}
+#ProcessSliderModule .tabs > li:hover {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) inset;
+}
+#ProcessSliderModule .tabs > li.active {
+    border-width: 2px 1px;
+    border-color: #E83561 #ddd #fff #ddd;
+    border-style: solid;
+}
+
+
+/* 7. Slider Component ============================================================================= */
+
+[id*=slide-container-] {
+    border: 1px solid #ddd;
+    position: relative
+}
+[id*=slide-container-]>* {
+    position: absolute;
+}
+
+#ProcessSliderModule .slider p {
+    margin: 0;
+}
+
+
+/* 8. Elements ============================================================================= */
+
+#ProcessSliderModule .slider-element {
+    -webkit-transition: box-shadow 0.3s ease-out;
+    -moz-transition: box-shadow 0.3s ease-out;
+    transition: box-shadow 0.3s ease-out;
+    width: 100%;
+    height: 100%;
+}
+#ProcessSliderModule .slider-element:hover {
+    box-shadow: 0 0 2px red;
+    -webkit-transition: box-shadow 0.3s ease-out;
+    -moz-transition: box-shadow 0.3s ease-out;
+    transition: box-shadow 0.3s ease-out;
+    cursor: move;
+}
+#ProcessSliderModule .slider-element.active {
+    box-shadow: 0px 0px 12px 4px #000;
+}
+#ProcessSliderModule .slider-element .ui-resizable-s {
+    bottom: 0
+}
+#ProcessSliderModule .slider-element .ui-resizable-e {
+    right: 0
+}
+#ProcessSliderModule .slider-element.slider-element-wrapper>img {
+    width: 100%;
+    height: 100%
+}
+
+/* 9. Toe Component ============================================================================= */
+
+#ProcessSliderModule .toe {
+    padding: 10px;
+    margin: 10px auto 0;
+    border: 1px solid #e5e5e5;
+    border-bottom-width: 2px;
+    background-color: #fff
+}
+
+#ProcessSliderModule .toe-data>fieldset {
+    display: inline-block;
+    position: relative;
+    padding: 25px 10px 0;
+    vertical-align: top
+}
+#ProcessSliderModule .toe-data>fieldset:before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    right: 0px;
+    left: 0px;
+    border: 1px solid #aaa;
+    border-bottom: 0;
+    height: 5px
+}
+#ProcessSliderModule .toe-data>fieldset:after {
+    content: attr(data-title);
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    width: 100px;
+    margin-left: -50px;
+    text-align: center;
+    background-color: #fff
+}
+#ProcessSliderModule .toe-item-timeline {
+    *zoom: 1;
+    border: 1px solid #e5e5e5;
+    height: 30px;
+    line-height: 30px;
+}
+#ProcessSliderModule .toe-item-timeline:before,
+#ProcessSliderModule .toe-item-timeline:after {
+    content: " ";
+    display: table
+}
+#ProcessSliderModule .toe-item-timeline:after {
+    clear: both
+}
+#ProcessSliderModule .toe-item-timeline:hover {
+    cursor: pointer;
+}
+#ProcessSliderModule .toe-item-timeline.active {
+    border: 1px solid #8D939E;
+}
+#ProcessSliderModule .toe-item-timeline.active>.toe-item-type {
+    font-weight: bold
+}
+#ProcessSliderModule .toe-item-timeline:hover>.drag-handler,
+#ProcessSliderModule .toe-item-timeline.active>.drag-handler {
+    cursor: n-resize;
+    background-color: #c0cfec !important
+}
+#ProcessSliderModule .toe-item-timeline .timeline-cover {
+    height: 18px;
+    position: absolute;
+    width: 100%;
+    background-color: rgba(255,255,255,0.40);
+    z-index: 3;
+}
+#ProcessSliderModule .toe-item-timeline:nth-child(2n) .timeline-wrapper,
+#ProcessSliderModule .toe-item-timeline:nth-child(2n) .toe-item-type,
+#ProcessSliderModule .toe-item-timeline:nth-child(2n) .toe-item-action {
+    background-color: #f6f6f6
+}
+#ProcessSliderModule .toe-item-action,
+#ProcessSliderModule .toe-item-type {
+    float: left;
+    height: 100%;
+    background-color: #fff
+}
+#ProcessSliderModule .toe-item-type {
+    color: #555;
+    width: 100px;
+    padding-left: 15px;
+    border-right: 1px solid #e5e5e5;
+    overflow: hidden;
+}
+#ProcessSliderModule .toe-item-action {
+    width: 28px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 12px;
+    color: #888;
+    cursor: pointer;
+    border-right: 1px solid #e5e5e5;
+}
+#ProcessSliderModule .drag-handler {
+    width: 5px;
+    -webkit-transition: border-left-color 0.2s ease;
+    -moz-transition: border-left-color 0.2s ease;
+    transition: border-left-color 0.2s ease
+}
+
+
+/* 10. Timeline Component ============================================================================= */
+
+#ProcessSliderModule .timeline-wrapper {
+    width: 100%;
+    padding-top: 5px;
+    height: 25px;
+    margin-right: 160px;
+    border-left: 1px solid #e5e5e5;
+    background: #fff
+}
+#ProcessSliderModule .timeline-wrapper .timeline-slider {
+    height: 20px;
+    border-radius: 0;
+    background: none;
+    border: 0;
+    margin-left: 160px;
+}
+#ProcessSliderModule .timeline-wrapper .ui-slider-handle,
+#ProcessSliderModule .timeline-wrapper .ui-slider-range {
+    height: 18px;
+    border-radius: 0;
+    background-image: none;
+    box-shadow: 0 2px 2px rgba(255, 255, 255, 0.5) inset
+}
+#ProcessSliderModule .timeline-wrapper .ui-slider-handle {
+    display: block;
+    width: 5px;
+    top: 0;
+    margin: 0;
+    border: 0;
+    cursor: e-resize;
+    background-color: #c4d3ed;
+    border: 1px solid #c3cde0
+}
+#ProcessSliderModule .timeline-wrapper .ui-slider-handle:last-child {
+    margin-left: -5px
+}
+#ProcessSliderModule .timeline-wrapper .ui-slider-range {
+    background-color: #d1ddf1;
+    border: 1px solid #b8c3d7;
+    cursor: move
+}
+#ProcessSliderModule .timeline-wrapper:hover .ui-slider-range,
+#ProcessSliderModule .timeline-wrapper.active .ui-slider-range {
+    background-color: #c0cfec;
+    -webkit-transition: background-color 0.2s ease;
+    -moz-transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease
+}
+
+#ProcessSliderModule .drop-highlight,
+#ProcessSliderModule .drag-highlight {
+    border-radius: 5px;
+    height: 43px;
+    width: 84px;
+    margin: 0;
+    padding: 0;
+    background: #f8efa5
+}
+#ProcessSliderModule .drag-highlight {
+    width: 100%;
+    height: 30px
+}

@@ -1,0 +1,316 @@
+ /*
+  * Jssor Slider bullet navigator skins
+  */
+.jssorb01 {
+	position: absolute;
+}
+.jssorb01 div, .jssorb01 div:hover, .jssorb01 .av {
+	position: absolute;
+	/* size of bullet elment */
+	width: 12px;
+	height: 12px;
+	filter: alpha(opacity=70);
+	opacity: .7;
+	overflow: hidden;
+	cursor: pointer;
+	border: #000 1px solid;
+}
+.jssorb01 div { background-color: gray; }
+.jssorb01 div:hover, .jssorb01 .av:hover { background-color: #d3d3d3; }
+.jssorb01 .av { background-color: #fff; }
+.jssorb01 .dn, .jssorb01 .dn:hover { background-color: #555555; }
+
+  .jssorb02 {
+	position: absolute;
+}
+.jssorb02 div, .jssorb02 div:hover, .jssorb02 .av {
+	position: absolute;
+	/* size of bullet elment */
+	width: 21px;
+	height: 21px;
+	text-align: center;
+	line-height: 21px;
+	color: white;
+	font-size: 12px;
+	background: url(../../jssor/img/b02.png) no-repeat;
+	overflow: hidden;
+	cursor: pointer;
+}
+.jssorb02 div { background-position: -5px -5px; }
+.jssorb02 div:hover, .jssorb02 .av:hover { background-position: -35px -5px; }
+.jssorb02 .av { background-position: -65px -5px; }
+.jssorb02 .dn, .jssorb02 .dn:hover { background-position: -95px -5px; }
+
+.jssorb03 {
+    position: absolute;
+}
+.jssorb03 div, .jssorb03 div:hover, .jssorb03 .av {
+    position: absolute;
+    /* size of bullet elment */
+    width: 21px;
+    height: 21px;
+    text-align: center;
+    line-height: 21px;
+    color: white;
+    font-size: 12px;
+    background: url(../../jssor/img/b03.png) no-repeat;
+    overflow: hidden;
+    cursor: pointer;
+}
+.jssorb03 div { background-position: -5px -4px; }
+.jssorb03 div:hover, .jssorb03 .av:hover { background-position: -35px -4px; }
+.jssorb03 .av { background-position: -65px -4px; }
+.jssorb03 .dn, .jssorb03 .dn:hover { background-position: -95px -4px; }
+
+.jssorb05 {
+    position: absolute;
+}
+.jssorb05 div, .jssorb05 div:hover, .jssorb05 .av {
+    position: absolute;
+    /* size of bullet elment */
+    width: 16px;
+    height: 16px;
+    background: url(../../jssor/img/b05.png) no-repeat;
+    overflow: hidden;
+    cursor: pointer;
+}
+.jssorb05 div { background-position: -7px -7px; }
+.jssorb05 div:hover, .jssorb05 .av:hover { background-position: -37px -7px; }
+.jssorb05 .av { background-position: -67px -7px; }
+.jssorb05 .dn, .jssorb05 .dn:hover { background-position: -97px -7px; }
+
+.jssorb06 {
+    position: absolute;
+}
+.jssorb06 div, .jssorb06 div:hover, .jssorb06 .av {
+    position: absolute;
+    /* size of bullet elment */
+    width: 18px;
+    height: 18px;
+    background: url(../../jssor/img/b06.png) no-repeat;
+    overflow: hidden;
+    cursor: pointer;
+}
+.jssorb06 div { background-position: -6px -6px; }
+.jssorb06 div:hover, .jssorb06 .av:hover { background-position: -36px -6px; }
+.jssorb06 .av { background-position: -66px -6px; }
+.jssorb06 .dn, .jssorb06 .dn:hover { background-position: -96px -6px; }
+
+.jssorb07 {
+    position: absolute;
+}
+.jssorb07 div, .jssorb07 div:hover, .jssorb07 .av {
+    position: absolute;
+    /* size of bullet elment */
+    width: 20px;
+    height: 20px;
+    background: url(../../jssor/img/b07.png) no-repeat;
+    overflow: hidden;
+    cursor: pointer;
+}
+.jssorb07 div { background-position: -5px -5px; }
+.jssorb07 div:hover, .jssorb07 .av:hover { background-position: -35px -5px; }
+.jssorb07 .av { background-position: -65px -5px; }
+.jssorb07 .dn, .jssorb07 .dn:hover { background-position: -95px -5px; }
+
+.jssorb09 {
+    position: absolute;
+}
+.jssorb09 div, .jssorb09 div:hover, .jssorb09 .av {
+    position: absolute;
+    /* size of bullet elment */
+    width: 12px;
+    height: 12px;
+    filter: alpha(opacity=70);
+    opacity: .7;
+    overflow: hidden;
+    cursor: pointer;
+    border: #fff 1px solid;
+}
+.jssorb09 div { background-color: #d3d3d3; }
+.jssorb09 div:hover, .jssorb09 .av:hover { background-color: gray; }
+.jssorb09 .av { background-color: #000; }
+.jssorb09 .dn, .jssorb09 .dn:hover { background-color: #a9a9a9; }
+
+.jssorb10 {
+    position: absolute;
+}
+.jssorb10 div, .jssorb10 div:hover, .jssorb10 .av {
+     position: absolute;
+     /* size of bullet elment */
+     width: 11px;
+     height: 11px;
+     background: url(../../jssor/img/b10.png) no-repeat;
+     overflow: hidden;
+     cursor: pointer;
+}
+.jssorb10 div { background-position: -10px -10px; }
+.jssorb10 div:hover, .jssorb10 .av:hover { background-position: -40px -10px; }
+.jssorb10 .av { background-position: -70px -10px; }
+.jssorb10 .dn, .jssorb10 .dn:hover { background-position: -100px -10px; }
+
+.jssorb11 {
+    position: absolute;
+}
+.jssorb11 div, .jssorb11 div:hover, .jssorb11 .av {
+     position: absolute;
+     /* size of bullet elment */
+     width: 11px;
+     height: 11px;
+     background: url(../../jssor/img/b11.png) no-repeat;
+     overflow: hidden;
+     cursor: pointer;
+}
+.jssorb11 div { background-position: -10px -10px; }
+.jssorb11 div:hover, .jssorb11 .av:hover { background-position: -40px -10px; }
+.jssorb11 .av { background-position: -70px -10px; }
+.jssorb11 .dn, .jssorb11 .dn:hover { background-position: -100px -10px; }
+
+.jssorb12 {
+    position: absolute;
+}
+.jssorb12 div, .jssorb12 div:hover, .jssorb12 .av {
+    position: absolute;
+    /* size of bullet elment */
+    width: 16px;
+    height: 16px;
+    background: url(../../jssor/img/b12.png) no-repeat;
+    overflow: hidden;
+    cursor: pointer;
+}
+.jssorb12 div { background-position: -7px -7px; }
+.jssorb12 div:hover, .jssorb12 .av:hover { background-position: -37px -7px; }
+.jssorb12 .av { background-position: -67px -7px; }
+.jssorb12 .dn, .jssorb12 .dn:hover { background-position: -97px -7px; }
+
+.jssorb13 {
+    position: absolute;
+}
+.jssorb13 div, .jssorb13 div:hover, .jssorb13 .av {
+    position: absolute;
+    /* size of bullet elment */
+    width: 21px;
+    height: 21px;
+    background: url(../../jssor/img/b13.png) no-repeat;
+    overflow: hidden;
+    cursor: pointer;
+}
+.jssorb13 div { background-position: -5px -5px; }
+.jssorb13 div:hover, .jssorb13 .av:hover { background-position: -35px -5px; }
+.jssorb13 .av { background-position: -65px -5px; }
+.jssorb13 .dn, .jssorb13 .dn:hover { background-position: -95px -5px; }
+
+.jssorb14 {
+    position: absolute;
+}
+.jssorb14 div, .jssorb14 div:hover, .jssorb14 .av {
+    position: absolute;
+    /* size of bullet elment */
+    width: 12px;
+    height: 12px;
+    background: url(../../jssor/img/b14.png) no-repeat;
+    overflow: hidden;
+    cursor: pointer;
+}
+.jssorb14 div { background-position: -9px -9px; }
+.jssorb14 div:hover, .jssorb14 .av:hover { background-position: -39px -9px; }
+.jssorb14 .av { background-position: -69px -9px; }
+.jssorb14 .dn, .jssorb14 .dn:hover { background-position: -99px -9px; }
+
+.jssorb16 {
+    position: absolute;
+}
+.jssorb16 div, .jssorb16 div:hover, .jssorb16 .av {
+    position: absolute;
+    /* size of bullet elment */
+    width: 21px;
+    height: 21px;
+    background: url(../../jssor/img/b16.png) no-repeat;
+    overflow: hidden;
+    cursor: pointer;
+}
+.jssorb16 div { background-position: -5px -5px; }
+.jssorb16 div:hover, .jssorb16 .av:hover { background-position: -35px -5px; }
+.jssorb16 .av { background-position: -65px -5px; }
+.jssorb16 .dn, .jssorb16 .dn:hover { background-position: -95px -5px; }
+
+.jssorb17 {
+    position: absolute;
+}
+.jssorb17 div, .jssorb17 div:hover, .jssorb17 .av {
+    position: absolute;
+    /* size of bullet elment */
+    width: 16px;
+    height: 16px;
+    background: url(../../jssor/img/b17.png) no-repeat;
+    overflow: hidden;
+    cursor: pointer;
+}
+.jssorb17 div { background-position: -7px -7px; }
+.jssorb17 div:hover, .jssorb17 .av:hover { background-position: -37px -7px; }
+.jssorb17 .av { background-position: -67px -7px; }
+.jssorb17 .dn, .jssorb17 .dn:hover { background-position: -97px -7px; }
+
+.jssorb18 {
+    position: absolute;
+}
+.jssorb18 div, .jssorb18 div:hover, .jssorb18 .av {
+    position: absolute;
+    /* size of bullet elment */
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    line-height: 24px;
+    font-size: 16px;
+    background: url(../../jssor/img/b18.png) no-repeat;
+    overflow: hidden;
+    cursor: pointer;
+}
+.jssorb18 div { background-position: -3px -3px; }
+.jssorb18 div:hover, .jssorb18 .av:hover { background-position: -33px -3px; }
+.jssorb18 .av { background-position: -63px -3px; }
+.jssorb18 .dn, .jssorb18 .dn:hover { background-position: -93px -3px; }
+.jssorb18 .n  { display: none; color: #000; }
+.jssorb18 div:hover .n, .jssorb18 .av .n, .jssorb18 .av:hover .n, .jssorb18 .dn .n { display: block; }
+
+.jssorb20 {
+    position: absolute;
+}
+.jssorb20 div, .jssorb20 div:hover, .jssorb20 .av {
+    position: absolute;
+    /* size of bullet elment */
+    width: 19px;
+    height: 19px;
+    text-align: center;
+    line-height: 19px;
+    color: white;
+    font-size: 12px;
+    background: url(../../jssor/img/b20.png) no-repeat;
+    overflow: hidden;
+    cursor: pointer;
+}
+.jssorb20 div { background-position: -5px -5px; }
+.jssorb20 div:hover, .jssorb20 .av:hover { background-position: -35px -5px; }
+.jssorb20 .av { background-position: -65px -5px; }
+.jssorb20 .dn, .jssorb20 .dn:hover { background-position: -95px -5px; }
+
+.jssorb21 {
+    position: absolute;
+}
+.jssorb21 div, .jssorb21 div:hover, .jssorb21 .av {
+    position: absolute;
+    /* size of bullet elment */
+    width: 19px;
+    height: 19px;
+    text-align: center;
+    line-height: 19px;
+    color: white;
+    font-size: 12px;
+    background: url(../../jssor/img/b21.png) no-repeat;
+    overflow: hidden;
+    cursor: pointer;
+}
+.jssorb21 div { background-position: -5px -5px; }
+.jssorb21 div:hover, .jssorb21 .av:hover { background-position: -35px -5px; }
+.jssorb21 .av { background-position: -65px -5px; }
+.jssorb21 .dn, .jssorb21 .dn:hover { background-position: -95px -5px; }

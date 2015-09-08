@@ -1,0 +1,28 @@
+{
+    "name": "ProcessSlider",
+    "version": "0.0.1",
+    "description": "Image slider module for ProcessWire CMS",
+    "main": "index.js",
+    "author": "Maurizio Bonani",
+    "license": "GNU\\GPL2",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mauricius/ProcessSlider.git"
+    },
+    "scripts": {
+        "dev": "webpack --watch",
+        "build": "webpack -p"
+    },
+    "keywords": [
+        "processwire",
+        "vue",
+        "webpack"
+    ],
+    "devDependencies": {
+        "node-libs-browser": "~0.5.2",
+        "webpack": "~1.9.11"
+    },
+    "dependencies": {
+        "vue": "~0.12.2"
+    }
+}
