@@ -431,7 +431,7 @@ _OUT;
             $f->attr('id+name', 'slider_export');
             $f->attr('value', "!ProcessSlider:$name:" . base64_encode(json_encode($exportData)) . "/!ProcessSlider");
             $f->label = $tab->attr('title');
-            $f->description = $this->_('To export this Hanna code and import somewhere else, copy the contents of this field and paste into the import box somewhere else.');
+            $f->description = $this->_('To export this Slider code and import somewhere else, copy the contents of this field and paste into the import box somewhere else.');
             $f->notes = $this->_('If you have made any changes above, make sure to save before copying the export data here.');
             $tab->add($f);
             $form->add($tab);
@@ -645,4 +645,4 @@ _OUT;
             $this->error($e->getMessage());
         }
     }
-} 
+}
