@@ -2,27 +2,27 @@ var Vue = require('vue');
 
 var Panel = Vue.extend({
     template:
-        '<div class="tab-pane" v-class="active : active_slide_id == slide.id" id="slide-{{slide.id}}" v-show="active_slide_id == slide.id">' +
-            '<div id="slide-container-{{slide.id}}" v-style="' +
+        '<div class="tab-pane" v-bind:class="{active : active_slide_id == slide.id}" id="slide-{{slide.id}}" v-show="active_slide_id == slide.id">' +
+            '<div id="slide-container-{{slide.id}}" v-bind:style="{' +
                 'width : width,' +
                 'height : height,' +
-                'background-image : image,' +
-                'background-size : background.size, ' +
-                'background-position : background.position,' +
-                'background-repeat : background.repeat' +
-            '">' +
-                '<component is="{{item.type}}" ' +
-                    'v-repeat="item : slide.items" ' +
-                    'v-ref="items" ' +
-                    'size="{{size}}"' +
-                    'active_item_id="{{active_item_id}}" ' +
-                    'reset-active-item="{{resetActiveItem}}"' +
+                '\'background-image\' : image,' +
+                '\'background-size\' : background.size, ' +
+                '\'background-position\' : background.position,' +
+                '\'background-repeat\' : background.repeat' +
+            '}">' +
+                '<component :is="item.type" ' +
+                    'v-for="item in slide.items" ' +
+                    ':item=item ' +
+                    ':size=size ' +
+                    ':active_item_id=active_item_id ' +
+                    ':reset-active-item=resetActiveItem' +
                 '></component>' +
             '</div>' +
         '</div>',
     replace : true,
 
-    props : ['active_slide_id', 'active_item_id', 'size', 'reset-active-item'],
+    props : ['active_slide_id', 'active_item_id', 'size', 'resetActiveItem', 'slide'],
 
     ready : function() {
 

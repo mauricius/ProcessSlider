@@ -1,5 +1,5 @@
 <div id="ProcessSliderModule">
-    <div class="notification" v-if="notification.show" v-transition="expand">{{ notification.text }}</div>
+    <div class="notification" v-if="notification.show" transition="expand">{{ notification.text }}</div>
     <div class="bar">
         <div class="section group">
             <div class="col span_1_of_12">
@@ -10,32 +10,32 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li>
-                            <a href="#" title="Add New Image" v-on="click: addItem('image', $event)">Image</a>
+                            <a href="#" title="Add New Image" v-on:click.prevent="addItem('image')">Image</a>
                         </li>
                         <li>
-                            <a href="#" title="Add New Text" v-on="click: addItem('text', $event)">Text</a>
+                            <a href="#" title="Add New Text" v-on:click.prevent="addItem('text')">Text</a>
                         </li>
                         <li>
-                            <a href="#" title="Add New Link" v-on="click: addItem('link', $event)">Link</a>
+                            <a href="#" title="Add New Link" v-on:click.prevent="addItem('link')">Link</a>
                         </li>
                         <li>
-                            <a href="#" title="Add New Image Link" v-on="click: addItem('imglink', $event)">Image Link</a>
+                            <a href="#" title="Add New Image Link" v-on:click.prevent="addItem('imglink')">Image Link</a>
                         </li>
                         <li>
-                            <a href="#" title="Add New Block" v-on="click: addItem('block', $event)">Block</a>
+                            <a href="#" title="Add New Block" v-on:click.prevent="addItem('block')">Block</a>
                         </li>
                         <li>
-                            <a href="#" title="Add New Video" v-on="click: addItem('video', $event)">Video</a>
+                            <a href="#" title="Add New Video" v-on:click.prevent="addItem('video')">Video</a>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="col span_2_of_12">
                 <label><b>Slides</b></label>
-                <a class="ui-button" id="add-slide" v-on="click: addSlide">
+                <a class="ui-button" id="add-slide" v-on:click="addSlide">
                     <span class="ui-button-text">Add</span>
                 </a> &nbsp;
-                <a class="ui-button" id="remove-slide" v-on="click: removeSlide">
+                <a class="ui-button" id="remove-slide" v-on:click="removeSlide">
                     <span class="ui-button-text">Remove</span>
                 </a>
             </div>
@@ -140,7 +140,10 @@
             <div class="col span_3_of_12 InputfieldCheckboxes">
                 <label><b>Transition Settings</b></label>
                 <label>Animation</label>
-                <select v-model="configuration.animation" options="options.transitions">
+                <select v-model="configuration.animation">
+                    <optgroup v-for="optgroup in options.transitions" v-bind:label="optgroup.label">
+                        <option v-for="option in optgroup.options" v-bind:value="option.value">{{ option.text }}</option>
+                    </optgroup>
                 </select>
                 <label>Slide Swipe Duration (ms)</label>
                 <input type="number" v-model="configuration.duration" step="100" lazy />
@@ -157,13 +160,13 @@
                     <label><b>Slide Background Image</b></label>
                     <div>
                         <a href="#" class="ui-button"
-                           v-on="click : openBackgroundImage"
-                           v-class="disabled: configuration.show_grid"
+                           v-on:click="openBackgroundImage"
+                           v-bind:class="{disabled: configuration.show_grid}"
                         ><span class="ui-button-text">Choose</span></a><br/>
                         <small v-text="active_slide.background"></small><br/>
                         <a href="#"
                            v-if="active_slide.background"
-                           v-on="click: removeBackground"
+                           v-on:click="removeBackground"
                         ><i class="fa fa-remove"></i> Remove Image</a>
                     </div>
                     <label>Select Image from Page ID</label>
@@ -194,12 +197,12 @@
         </div>
     </div>
 
-    <div class="tools" v-if="active_item" v-transition="expand">
+    <div class="tools" v-if="active_item" transition="expand">
         <div class="section group">
             <div class="col span_3_of_12">
                 <h3>
                     {{active_item.type | capitalize }} Editor
-                    <small><a href="#" v-on="click: removeItem"><i class="fa fa-times"></i> Remove Item</a></small>
+                    <small><a href="#" v-on:click="removeItem"><i class="fa fa-times"></i> Remove Item</a></small>
                 </h3>
                 <small><i class="fa fa-arrows"></i> <em>{{active_item.style.width}}, {{ active_item.style.height}}</em></small> |
                 <small><i class="fa fa-map-marker"></i> <em>{{active_item.style.top}}, {{ active_item.style.left}}</em></small>
@@ -207,60 +210,60 @@
 
             <div class="col span_2_of_12">
                 <label><strong>Resize</strong></label>
-                <a class="ui-button" title="Full Width" v-on="click: resize('width', configuration.size.width, configuration.size.height)"><span class="ui-button-text"><i class="fa fa-arrows-h"></i></span></a>
-                <a class="ui-button" title="Full Height" v-on="click: resize('height', configuration.size.width, configuration.size.height)"><span class="ui-button-text"><i class="fa fa-arrows-v"></i></span></a>
-                <a class="ui-button" title="Full Size" v-on="click: resize('full', configuration.size.width, configuration.size.height)"><span class="ui-button-text"><i class="fa fa-arrows"></i></span></a>
-                <a class="ui-button" title="Restore" v-on="click: resize()"><span class="ui-button-text"><i class="fa fa-undo"></i></span></a>
+                <a class="ui-button" title="Full Width" v-on:click="resize('width', configuration.size.width, configuration.size.height)"><span class="ui-button-text"><i class="fa fa-arrows-h"></i></span></a>
+                <a class="ui-button" title="Full Height" v-on:click="resize('height', configuration.size.width, configuration.size.height)"><span class="ui-button-text"><i class="fa fa-arrows-v"></i></span></a>
+                <a class="ui-button" title="Full Size" v-on:click="resize('full', configuration.size.width, configuration.size.height)"><span class="ui-button-text"><i class="fa fa-arrows"></i></span></a>
+                <a class="ui-button" title="Restore" v-on:click="resize()"><span class="ui-button-text"><i class="fa fa-undo"></i></span></a>
             </div>
             <div class="col span_2_of_12">
                 <label><strong>Position</strong></label>
                 <div class="tool-position actions">
-                    <a href="#" title="Left border" v-on="click: align('left', $event)"><span class="ui-button-text"><i class="fa fa-caret-left"></i></span></a>
-                    <a href="#" title="Top border" v-on="click: align('top', $event)"><span class="ui-button-text"><i class="fa fa-caret-up"></i></span></a>
-                    <a href="#" title="Right border" v-on="click: align('right', $event)"><span class="ui-button-text"><i class="fa fa-caret-right"></i></span></a>
-                    <a href="#" title="Bottom border" v-on="click: align('bottom', $event)"><span class="ui-button-text"><i class="fa fa-caret-down"></i></span></a>
-                    <a href="#" title="Slider center" v-on="click: center"><span class="ui-button-text"><i class="fa fa-circle"></i></span></a>
-                    <a href="#" title="Vertical center" v-on="click: centerVertical"><span class="ui-button-text">VC</span></a>
-                    <a href="#" title="Horizontal center" v-on="click: centerHorizontal"><span class="ui-button-text">HC</span></a>
+                    <a href="#" title="Left border" v-on:click.prevent="align('left')"><span class="ui-button-text"><i class="fa fa-caret-left"></i></span></a>
+                    <a href="#" title="Top border" v-on:click.prevent="align('top')"><span class="ui-button-text"><i class="fa fa-caret-up"></i></span></a>
+                    <a href="#" title="Right border" v-on:click.prevent="align('right')"><span class="ui-button-text"><i class="fa fa-caret-right"></i></span></a>
+                    <a href="#" title="Bottom border" v-on:click.prevent="align('bottom')"><span class="ui-button-text"><i class="fa fa-caret-down"></i></span></a>
+                    <a href="#" title="Slider center" v-on:click.prevent="center"><span class="ui-button-text"><i class="fa fa-circle"></i></span></a>
+                    <a href="#" title="Vertical center" v-on:click.prevent="centerVertical"><span class="ui-button-text">VC</span></a>
+                    <a href="#" title="Horizontal center" v-on:click.prevent="centerHorizontal"><span class="ui-button-text">HC</span></a>
                 </div>
             </div>
             <component
-                is="{{active_item.type}}-editor"
-                page_id="{{configuration.background.page_id}}"
-                active_item="{{active_item}}"
-                remove-item={{removeItem}}
+                :is="active_item.type + '-editor'"
+                :page_id=configuration.background.page_id
+                :active_item=active_item
+                :remove-item=removeItem
             >
             </component>
-            <a href="#" class="close" v-on="click: closeEditor"><i class="fa fa-remove"></i> Close</a>
+            <a href="#" class="close" v-on:click.prevent="closeEditor"><i class="fa fa-remove"></i> Close</a>
         </div>
     </div>
 
     <ul class="tabs sortable">
         <tab
-            v-repeat="tab: slides"
-            v-ref="tabs"
-            active_slide_id={{active_slide_id}}
-            reset-active="{{activateSlide}}"
+            v-for="tab in slides"
+            :tab="tab"
+            :active_slide_id=active_slide_id
+            :reset-active=activateSlide
         >
         </tab>
     </ul>
 
     <div class="slider">
         <div class="tab-content"
-             v-style="
+             v-bind:style="{
                 width : configuration.size.width + 'px',
                 height : configuration.size.height + 'px',
                 'background-color' : configuration.background.color,
                 'background-image' : configuration.background.image,
                 'background-size' : configuration.background.size
-            ">
+            }">
             <panel
-                v-repeat="slide: slides"
-                v-ref="panels"
-                active_slide_id={{active_slide_id}}
-                active_item_id={{active_item_id}}
-                reset-active-item={{activateItem}}
-                size={{configuration.size}}
+                v-for="slide in slides"
+                :slide="slide"
+                :active_slide_id=active_slide_id
+                :active_item_id=active_item_id
+                :size=configuration.size
+                :reset-active-item=activateItem
             ></panel>
         </div>
     </div>
@@ -282,7 +285,11 @@
                     </div>
                     <div class="col span_4_of_12">
                         <label for="in-use"> transition <br>
-                            <select class="input-small easing-list" v-model="active_item.in.transition" options="options.captions"></select>
+                            <select class="input-small easing-list" v-model="active_item.in.transition">
+                                <optgroup v-for="optgroup in options.captions" v-bind:label="optgroup.label">
+                                    <option v-for="option in optgroup.options">{{ option }}</option>
+                                </optgroup>
+                            </select>
                         </label>
                     </div>
                     <div class="col span_4_of_12">
@@ -301,7 +308,11 @@
                     </div>
                     <div class="col span_4_of_12">
                         <label for="out-to"> transition <br>
-                            <select class="input-small effect-list" v-model="active_item.out.transition" options="options.captions"></select>
+                            <select class="input-small effect-list" v-model="active_item.out.transition">
+                                <optgroup v-for="optgroup in options.captions" v-bind:label="optgroup.label">
+                                    <option v-for="option in optgroup.options">{{ option }}</option>
+                                </optgroup>
+                            </select>
                         </label>
                     </div>
                     <div class="col span_4_of_12">
@@ -315,15 +326,16 @@
 
         <div class="toe-item" v-if="active_slide">
             <toe
-                v-repeat="item: active_slide.items"
-                active_item_id={{active_item_id}}
-                reset-active-item={{activateItem}}
-                remove-item={{removeItem}}
+                v-for="item in active_slide.items"
+                :item=item
+                :active_item_id=active_item_id
+                :reset-active-item=activateItem
+                :remove-item=removeItem
             ></toe>
         </div>
 
         <small>&darr; <i>most upper element</i></small>
     </div>
 
-    <!--pre>{{ $data.active_item | json }}</pre-->
+    <!--pre>{{ $data | json }}</pre-->
 </div>

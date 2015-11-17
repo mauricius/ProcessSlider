@@ -5,12 +5,14 @@ var TextEditor = Vue.extend({
     template:
         '<div class="col span_2_of_12">' +
             '<label>Content</label>' +
-            '<a href="#" class="ui-button" v-on="click : openUploadImage"><span class="ui-button-text">Open</span></a><br/>' +
+            '<a href="#" class="ui-button" v-on:click.prevent="openUploadImage"><span class="ui-button-text">Open</span></a><br/>' +
             '<small v-text="url"></small>' +
         '</div>' +
         '<div class="col span_2_of_12">' +
             '<label>Class</label>' +
-            '<select v-model="active_item.class" options="classes"></select>' +
+            '<select v-model="active_item.class">' +
+                '<option v-for="class in classes">{{class}}</option>' +
+            '</select>' +
             '<label>URL</label>' +
             '<input type="url" v-model="active_item.options.href" />' +
             '<label>Target</label>' +

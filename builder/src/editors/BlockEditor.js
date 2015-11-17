@@ -5,7 +5,9 @@ var BlockEditor = Vue.extend({
     template:
         '<div class="col span_5_of_12">' +
             '<label>Class</label>' +
-            '<select v-model="active_item.class" options="classes"></select>' +
+            '<select v-model="active_item.class">' +
+                '<option v-for="class in classes">{{class}}</option>' +
+            '</select>' +
         '</div>',
     replace: true,
     props : ['active_item', 'remove-item'],

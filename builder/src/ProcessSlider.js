@@ -2,7 +2,7 @@ var Vue = require('vue');
 var Generator = require('./Generator');
 var animations = require('./data/animations');
 
-Vue.config.debug = false;
+Vue.config.debug = true;
 
 ProcessSlider = new Vue({
 
@@ -187,7 +187,7 @@ ProcessSlider = new Vue({
         removeBackground : function(ev) {
             ev.preventDefault();
 
-            this.active_slide.background = null
+            this.active_slide.background = null;
         },
         addSlide : function() {
             this.slide_count++;
@@ -208,13 +208,15 @@ ProcessSlider = new Vue({
 
             var ret = confirm("Are you sure you want to delete the current slide?");
 
-            if (ret === true) {
+            if(ret) {
                 var filtered = this.slides.filter(function(slide) {
                     return slide.id != _this.active_slide_id;
                 });
 
                 this.active_slide = null;
                 this.active_slide_id = null;
+                this.active_item = null;
+                this.active_item_id = null;
 
                 this.slides = filtered;
             }
@@ -240,8 +242,7 @@ ProcessSlider = new Vue({
 
             return active[0];
         },
-        addItem : function(itemType, ev) {
-            ev.preventDefault();
+        addItem : function(itemType) {
 
             if(!this.active_slide) {
                 this._showNotification("Select a slide before adding any elements!");
@@ -349,9 +350,7 @@ ProcessSlider = new Vue({
 
             return active[0];
         },
-        closeEditor : function(ev) {
-            ev.preventDefault();
-
+        closeEditor : function() {
             this.active_item_id = null;
             this.active_item = null;
         },
@@ -475,8 +474,7 @@ ProcessSlider = new Vue({
                     this.active_item.style.height = 'auto';
             }
         },
-        align : function(direction, ev) {
-            ev.preventDefault();
+        align : function(direction) {
 
             var $element = $(".slider-element.active");
 
@@ -525,9 +523,7 @@ ProcessSlider = new Vue({
                     break;
             }
         },
-        center : function(ev) {
-            ev.preventDefault();
-
+        center : function() {
             var $element = $(".slider-element.active");
 
             this.active_item.style.top = this.configuration.size.height / 2 - $element.outerHeight(true) / 2 + "px";
@@ -535,17 +531,13 @@ ProcessSlider = new Vue({
             this.active_item.style.right = "auto";
             this.active_item.style.bottom = "auto";
         },
-        centerVertical : function(ev) {
-            ev.preventDefault();
-
+        centerVertical : function() {
             var $element = $(".slider-element.active");
 
             this.active_item.style.top = this.configuration.size.height / 2 - $element.outerHeight(true) / 2 + "px";
             this.active_item.style.bottom = "auto";
         },
-        centerHorizontal : function(ev) {
-            ev.preventDefault();
-
+        centerHorizontal : function() {
             var $element = $(".slider-element.active");
 
             this.active_item.style.left = this.configuration.size.width / 2 - $element.outerWidth(true) / 2 + "px";

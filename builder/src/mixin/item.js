@@ -1,7 +1,7 @@
 var classNames = require('classnames');
 
 module.exports = {
-    props : ['size', 'active_item_id', 'reset-active-item'],
+    props : ['size', 'active_item_id', 'resetActiveItem', 'item'],
     methods : {
         activateItem : function(e) {
             if (e) e.preventDefault();

@@ -4,10 +4,10 @@ var item = require('./../mixin/item');
 
 var Video = Vue.extend({
     mixins: [item],
-    template: '<div class="draggable resizable" v-style="item.style">' +
+    template: '<div class="draggable resizable" v-bind:style="item.style">' +
         '<img class="slider-element {{class}}" ' +
-            'v-on="mousedown: activateItem, click: activateItem" ' +
-            'v-attr="src: thumb_url" />' +
+            'v-on:mousedown="activateItem" v-on:click="activateItem" ' +
+            'v-bind:src="thumb_url" />' +
     '</div>',
     replace: true,
 
