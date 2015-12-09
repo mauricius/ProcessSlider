@@ -1,4 +1,5 @@
 var path = require('path');
+var webpack = require('webpack');
 var DEV = process.argv.indexOf('--dev') !== -1;
 
 module.exports = {
@@ -13,6 +14,9 @@ module.exports = {
         root: path.resolve(__dirname, 'src'),
         extensions: ['', '.js']
     },
+    plugins: DEV ? [] : [
+        new webpack.optimize.UglifyJsPlugin({minimize: true})
+    ],
     module: {
         loaders: []
     }
