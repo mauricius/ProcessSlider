@@ -99,13 +99,25 @@ class MarkupSliderConfig extends ModuleConfig
         // ------------------------------------------------------------------------
         // Show how many cache files uses the module
         // ------------------------------------------------------------------------
-        $cacheInfo         = $this->getNumberOfCacheFiles();
+        $cacheInfo          = $this->getNumberOfCacheFiles();
         $field              = wire('modules')->get('InputfieldMarkup');
         $field->columnWidth = 25;
         $field->label       = __('Cache');
         $field->description = sprintf(__('Cached files: %s | Used space: %s'), $cacheInfo['numberOfFiles'], $cacheInfo['bytesTotal']);
 
         $fields->add($field);
+
+        // ------------------------------------------------------------------------
+        // Instructions on how to use JSSOR with the module
+        // ------------------------------------------------------------------------
+        $field              = wire('modules')->get("InputfieldMarkup");
+        $field->label       = __("Install JSSOR");
+        $line[]             = __('Create a new folder in /site/modules/ProcessSlider/ and call it jssor. Download the Jssor library from http://jssor.com/download.html and place the content of the ZIP file in it.');
+        $line[]             = __('The module uses only the files in the "js" and "img" folders. JSSOR uses the files "jssor.slider.debug.js" in development mode and "jssor.slider.min.js" in production.');
+        $field->value = implode('<br>', $line);
+
+        $fields->add($field);
+
 
         return $fields;
     }

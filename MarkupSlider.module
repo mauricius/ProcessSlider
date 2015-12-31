@@ -55,7 +55,7 @@ class MarkupSlider extends WireData implements Module
             // ------------------------------------------------------------------------
             // Version: major, minor, revision, i.e. 100 = 1.1.0
             // ------------------------------------------------------------------------
-            'version' => 001,
+            'version' => 010,
             'author' => 'Maurizio Bonani',
             // ------------------------------------------------------------------------
             // Summary is brief description of what this module is
@@ -185,8 +185,7 @@ class MarkupSlider extends WireData implements Module
         // use non-combined and non-minified files in development mode
         if($this->development_mode == 1) {
             $scripts =
-                "<script type='text/javascript' src='{$this->moduleUrl}jssor/js/jssor.js'></script>\n" .
-                "<script type='text/javascript' src='{$this->moduleUrl}jssor/js/jssor.slider.js'></script>\n";
+                "<script type='text/javascript' src='{$this->moduleUrl}jssor/js/jssor.slider.debug.js'></script>";
         } else {
             $scripts = "<script type='text/javascript' src='{$this->moduleUrl}jssor/js/jssor.slider.min.js'></script>\n";
         }
