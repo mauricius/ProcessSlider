@@ -137,6 +137,6 @@ I would like to thank the entire ProcessWire community and in particular Ryan Cr
 
 # License
 
-Licenced under GPLv2. See LICENSE.
+Licenced under MIT. See LICENSE.
 
 Have fun with the code.
